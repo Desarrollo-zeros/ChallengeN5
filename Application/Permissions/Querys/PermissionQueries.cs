@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Application.Permissions.Querys
 {
-    public record GetPermissionsQuery() : IRequest<IEnumerable<Permission>>;
+    public record GetPermissionsQuery() : IRequest<IEnumerable<PermissionResponse>>;
 
-    public record GetPermissionsFilterQuery(int id) : IRequest<Permission?>;
+    public record GetPermissionsFilterQuery(int id) : IRequest<PermissionResponse>;
 
 }

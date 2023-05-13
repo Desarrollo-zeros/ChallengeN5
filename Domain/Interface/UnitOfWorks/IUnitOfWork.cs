@@ -9,8 +9,8 @@ namespace Domain.Interface.UnitOfWorks
 {
     public interface IUnitOfWork
     {
-        public IPermissionRepository PermissionRepository { get; set; }
-        public IPermissionTypeRepository PermissionTypeRepository { get; set; }
+        public IPermissionRepository PermissionRepository { get;  }
+        public IPermissionTypeRepository PermissionTypeRepository { get;  }
         Task<int> CommitAsync();
     }
 }

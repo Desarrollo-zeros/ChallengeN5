@@ -1,4 +1,5 @@
-﻿using Domain.Interface.Base;
+﻿using Domain.Base;
+using Domain.Interface.Base;
 using Domain.Interface.Permissions;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public  class  Repository<T> : IRepository<T> where T : class, IEntity
+    public  class  Repository<T> : IRepository<T> where T : Entity, IEntity
     {
         private readonly AppDbContext _dbContext;
 
@@ -62,6 +63,11 @@ namespace Infrastructure.Repositories
         public void RemoveRange(IEnumerable<T> entities)
         {
             _dbContext.Set<T>().RemoveRange(entities);
+        }
+
+        public async Task<bool> AnyAsync(int id)
+        {
+            return await _dbContext.Set<T>().AnyAsync(x => x.Id == id);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Domain.Permissions
 
         [ForeignKey("PermissionType")]
         public int PermissionTypeId { get; set; }
-
+        [Column(TypeName = "datetime2(3)")]
         public DateTime PermissionDate { get; set; }
 
         public virtual PermissionType PermissionType { get; set; }

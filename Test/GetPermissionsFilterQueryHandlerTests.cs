@@ -1,6 +1,10 @@
 ﻿using Application.Permissions.Querys;
+using AutoMapper;
+using Domain.Interface.ElasticsearchServices;
 using Domain.Interface.Permissions;
+using Domain.Mappers;
 using Domain.Permissions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -12,22 +16,32 @@ using System.Threading.Tasks;
 [TestFixture]
 public class GetPermissionsFilterQueryHandlerTests
 {
-    private Mock<IPermissionRepository> _mockPermissionRepository;
-    private GetPermissionsFilterQueryHandler _handler;
-
+  
+    private IGetPermissionsFilterQueryHandler _handler;
+    private IMapper _mapper;
+    private Mock<IElasticSearchApplication<PermissionElasticsearch>> _elasticsearchSearchApplication;
+   
     [SetUp]
     public void Setup()
     {
-        _mockPermissionRepository = new Mock<IPermissionRepository>();
-        _handler = new GetPermissionsFilterQueryHandler(_mockPermissionRepository.Object);
+        
+
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<PermissionMapper>();
+
+        });
+        _mapper = config.CreateMapper();
+        _elasticsearchSearchApplication = new Mock<IElasticSearchApplication<PermissionElasticsearch>>();
+        _handler = new GetPermissionsFilterQueryHandler(_elasticsearchSearchApplication.Object, _mapper);
     }
 
     [Test]
     public async Task Handle_ValidId_ReturnsPermission()
     {
         // Arrange
-        var permission = new Permission { Id = 1 };
-        _mockPermissionRepository.Setup(x => x.GetPermissionByIdAsync(1))
+        var permission = new PermissionElasticsearch { Id = 1 };
+        _elasticsearchSearchApplication.Setup(x => x.GetAsync(1))
                                  .ReturnsAsync(permission);
 
         var query = new GetPermissionsFilterQuery(1) {  };
@@ -36,16 +50,13 @@ public class GetPermissionsFilterQueryHandlerTests
         var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
-        Assert.That(result, Is.EqualTo(permission));
+        Assert.That(result.EmployeSurname, Is.EqualTo(permission.EmployeSurname));
     }
 
     [Test]
     public async Task Handle_InvalidId_ReturnsNull()
     {
-        // Arrange
-        _mockPermissionRepository.Setup(x => x.GetPermissionByIdAsync(1))
-                                 .ReturnsAsync((Permission)null);
-
+       
         var query = new GetPermissionsFilterQuery (1){  };
 
         // Act
@@ -61,15 +72,15 @@ public class GetPermissionsFilterQueryHandlerTests
     {
         // Arrange
         int id = new Random().Next(1, 100);
-        var permission = new Permission
+        var permission = new PermissionElasticsearch
         {
             Id = id,
             EmployeeForename = "John",
             EmployeSurname = "Doe",
-            PermissionTypeId = 1,
+            PermissionType = "Permission",
             PermissionDate = DateTime.UtcNow
         };
-        _mockPermissionRepository.Setup(x => x.GetPermissionByIdAsync(id))
+        _elasticsearchSearchApplication.Setup(x => x.GetAsync(id))
                                  .ReturnsAsync(permission);
 
         var query = new GetPermissionsFilterQuery(id);
@@ -82,7 +93,7 @@ public class GetPermissionsFilterQueryHandlerTests
         Assert.That(result.Id, Is.EqualTo(permission.Id));
         Assert.That(result.EmployeeForename, Is.EqualTo(permission.EmployeeForename));
         Assert.That(result.EmployeSurname, Is.EqualTo(permission.EmployeSurname));
-        Assert.That(result.PermissionTypeId, Is.EqualTo(permission.PermissionTypeId));
+        Assert.That(result.PermissionType, Is.EqualTo(permission.PermissionType));
         Assert.That(result.PermissionDate, Is.EqualTo(permission.PermissionDate));
     }
 
@@ -91,8 +102,8 @@ public class GetPermissionsFilterQueryHandlerTests
     {
         // Arrange
         int id = new Random().Next(1, 100);
-        _mockPermissionRepository.Setup(x => x.GetPermissionByIdAsync(id))
-                                 .ReturnsAsync((Permission)null);
+        _elasticsearchSearchApplication.Setup(x => x.GetAsync(id))
+                                 .ReturnsAsync((PermissionElasticsearch)null);
 
         var query = new GetPermissionsFilterQuery(id);
 

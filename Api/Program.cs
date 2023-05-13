@@ -1,72 +1,48 @@
+using Application.ElasticsearchServices;
+using Application.KafkaServices;
+using Application.Logs.Querys;
 using Application.Permissions.Commands;
 using Application.Permissions.Querys;
+using AutoMapper;
+using Confluent.Kafka;
+using Domain.Base;
 using Domain.Interface.Base;
+using Domain.Interface.ElasticsearchServices;
+using Domain.Interface.KafkaServices;
 using Domain.Interface.Permissions;
 using Domain.Interface.UnitOfWorks;
 using Domain.Permissions;
 using Infrastructure;
+using Infrastructure.Audilog;
+using Infrastructure.Mapping;
+using Infrastructure.Middleware;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Permissions;
+using Infrastructure.Seeders;
 using Infrastructure.UnitOfWork;
 using MediatR;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Update;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Pomelo.EntityFrameworkCore.MySql;
+using Nest;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
+using Microsoft.Extensions.Logging;
+using Api;
 
-var builder = WebApplication.CreateBuilder(args);
-
-
-
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<IAppDbContext,AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
-builder.Services.AddControllers();
-
-builder.Services.AddMediatR(typeof(Program).Assembly);
-
-builder.Services.AddScoped(typeof(IRepository<Permission>), typeof(Repository<Permission>));
-builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
-builder.Services.AddScoped<IPermissionTypeRepository, PermissionTypeRepository>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IRequestHandler<RequestPermissionCommand, Permission>, RequestPermissionCommandHandler>();
-builder.Services.AddScoped<IRequestHandler<ModifyPermissionCommand, Permission>, ModifyPermissionCommandHandler>();
-builder.Services.AddScoped<IRequestHandler<GetPermissionsQuery, IEnumerable<Permission>>, GetPermissionsQueryHandler>();
-builder.Services.AddScoped<IRequestHandler<GetPermissionsFilterQuery, Permission?>, GetPermissionsFilterQueryHandler>();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+internal class Program
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+           Host.CreateDefaultBuilder(args)
+               .ConfigureWebHostDefaults(webBuilder =>
+               {
+                   webBuilder.UseStartup<Startup>();
+               });
+
+    private static void Main(string[] args)
+    {
+       
+        CreateHostBuilder(args).Build().Run();
+
+    }
 }
-
-// Migrate the database
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
-
-app.Run();
-
-

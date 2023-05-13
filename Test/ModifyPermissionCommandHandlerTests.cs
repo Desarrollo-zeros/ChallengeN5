@@ -1,9 +1,13 @@
 using Application.Permissions.Commands;
+using Application.Permissions.Querys;
+using AutoMapper;
 using Domain.Exceptions;
 using Domain.Interface.ElasticsearchServices;
 using Domain.Interface.Permissions;
 using Domain.Interface.UnitOfWorks;
+using Domain.Mappers;
 using Domain.Permissions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System.Security;
@@ -14,8 +18,10 @@ public class ModifyPermissionCommandHandlerTests
     private Mock<IPermissionRepository> _mockPermissionRepository;
     private Mock<IPermissionTypeRepository> _mockPermissionTypeRepository;
     private Mock<IUnitOfWork> _mockUnitOfWork;
-    private ModifyPermissionCommandHandler _handler;
-    private Mock<IElasticSearchApplication<Permission>> _elasticSearchApplication;
+    private IModifyPermissionCommandHandler _handler;
+    private Mock<IElasticSearchApplication<PermissionElasticsearch>> _elasticSearchApplication;
+    private IMapper _mapper;
+    private Mock<ILogger<ModifyPermissionCommandHandler>> _logger;
 
     [SetUp]
     public void Setup()
@@ -23,8 +29,15 @@ public class ModifyPermissionCommandHandlerTests
         _mockPermissionRepository = new Mock<IPermissionRepository>();
         _mockPermissionTypeRepository = new Mock<IPermissionTypeRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        
-        _elasticSearchApplication = new Mock<IElasticSearchApplication<Permission>>();
+
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<PermissionMapper>();
+
+        });
+        _mapper = config.CreateMapper();
+
+        _elasticSearchApplication = new Mock<IElasticSearchApplication<PermissionElasticsearch>>();
         // Arrange
         var permission = new Permission { Id = 1, PermissionTypeId = 1 };
         var permissionType = new List<PermissionType>
@@ -39,10 +52,11 @@ public class ModifyPermissionCommandHandlerTests
                 Id = 2,
             }
         };
+        _logger = new Mock<ILogger<ModifyPermissionCommandHandler>>();
         _mockPermissionRepository.Setup(x => x.GetByIdAsync(permission.Id)).ReturnsAsync(permission);
         _mockUnitOfWork.Setup(x => x.PermissionRepository).Returns(_mockPermissionRepository.Object);
-        _mockUnitOfWork.Setup(x => x.PermissionTypeRepository.GetByIdAsync(1)).ReturnsAsync(permissionType?.FirstOrDefault());
-        _handler = new ModifyPermissionCommandHandler(_mockPermissionRepository.Object,  _elasticSearchApplication.Object, _mockUnitOfWork.Object);
+        _mockUnitOfWork.Setup(x => x.PermissionTypeRepository.AnyAsync(1)).ReturnsAsync(true);
+        _handler = new ModifyPermissionCommandHandler(_mockPermissionRepository.Object,  _elasticSearchApplication.Object, _mockUnitOfWork.Object, _mapper, _logger.Object);
 
 
     }
@@ -71,7 +85,6 @@ public class ModifyPermissionCommandHandlerTests
         _mockUnitOfWork.Verify(x => x.CommitAsync(), Times.Once);
         Assert.AreEqual(command.EmployeeForename, result.EmployeeForename);
         Assert.AreEqual(command.EmployeSurname, result.EmployeSurname);
-        Assert.AreEqual(command.PermissionTypeId, result.PermissionTypeId);
         Assert.AreEqual(command.PermissionDate, result.PermissionDate);
     }
 

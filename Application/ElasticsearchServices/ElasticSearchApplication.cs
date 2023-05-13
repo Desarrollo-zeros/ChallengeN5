@@ -1,4 +1,6 @@
-﻿using Domain.Interface.ElasticsearchServices;
+﻿using Domain.Base;
+using Domain.Interface.Base;
+using Domain.Interface.ElasticsearchServices;
 using Nest;
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.ElasticsearchServices
 {
-    public class ElasticSearchApplication<T> : IElasticSearchApplication<T> where T : class
+    public class ElasticSearchApplication<T> : IElasticSearchApplication<T> where T : Entity, IEntity
     {
         private readonly IElasticClient _elasticClient;
         public ElasticSearchApplication(IElasticClient elasticClient)
@@ -26,15 +28,15 @@ namespace Application.ElasticsearchServices
             return t.ToList();
         }
 
-        public async Task<T> GetAsync(Guid id)
+        public async Task<T> GetAsync(int id)
         {
             var t = await _elasticClient.GetAsync<T>(id);
             return t.Source;
         }
 
-        public async Task SaveSingleAsync(T t, int Id)
+        public async Task SaveSingleAsync(T t)
         {
-            var product = await _elasticClient.GetAsync<T>(Id);
+            var product = await _elasticClient.GetAsync<T>(t.Id);
             if (product.Found)
             {
                 var result = await _elasticClient.UpdateAsync<T>(t, u => u.Doc(t));

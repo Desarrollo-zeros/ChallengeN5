@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Domain.Base;
+using Domain.Interface.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Interface.ElasticsearchServices
 {
-    public interface IElasticSearchApplication<T> where T : class
+    public interface IElasticSearchApplication<T> where T : Entity, IEntity
     {
-        Task SaveSingleAsync(T t, int Id);
+        Task SaveSingleAsync(T t);
 
-        Task<T> GetAsync(Guid id);
+        Task<T> GetAsync(int id);
 
         Task<List<T>> GetAll();
 

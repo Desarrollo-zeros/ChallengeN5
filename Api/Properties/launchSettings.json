@@ -4,7 +4,11 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SQL_SERVER_CONNECTION": "Server=locahost,5001; Database=PermissionDb; User=sa;Password=Pass@word;TrustServerCertificate=True",
+        "ELASTICSEARCH__URI": "http://elasticsearch:9200",
+        "SEQURL": "http://localhost:5341/",
+        "KAFKA__BOOTSTRAPSERVERS": "localhost:9092"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7120;http://localhost:5120"

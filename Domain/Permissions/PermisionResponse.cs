@@ -1,18 +1,18 @@
-﻿using System;
+﻿using Nest;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nest;
 
 namespace Domain.Permissions
 {
-    public class PermissionDocument
+    public class PermissionResponse
     {
+        public int Id { get; set; }
         public string EmployeeForename { get; set; }
         public string EmployeSurname { get; set; }
-        public int PermissionTypeId { get; set; }
+        public string PermissionType { get; set; }
         public DateTime PermissionDate { get; set; }
-        public PermissionType PermissionType { get; set; }
     }
 }

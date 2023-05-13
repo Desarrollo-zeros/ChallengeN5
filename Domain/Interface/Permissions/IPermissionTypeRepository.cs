@@ -10,5 +10,6 @@ namespace Domain.Interface.Permissions
     public interface IPermissionTypeRepository : IRepository<PermissionType>
     {
         Task<PermissionType?> GetByDescription(string description);
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Domain.Interface.Base;
 using Domain.Permissions;
+using Infrastructure.Seeders;
 using Microsoft.EntityFrameworkCore;
 namespace Infrastructure
 {

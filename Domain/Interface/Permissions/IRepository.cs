@@ -23,5 +23,7 @@ namespace Domain.Interface.Permissions
 
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entities);
+
+        Task<bool> AnyAsync(int id);
     }
 }

@@ -39,7 +39,12 @@ namespace Infrastructure.Repositories.Permissions
 
         public async Task<IEnumerable<Permission>> GetAsync(Expression<Func<Permission, bool>> predicate)
         {
-            return await _dbContext.Set<Permission>().Include(x => x.PermissionType).Where(predicate).ToListAsync();
+            return await _dbContext.Permissions.Include(x => x.PermissionType).Where(predicate).ToListAsync();
+        }
+
+        public async Task<Permission> GetByIdAsync(int id)
+        {
+            return await _dbContext.Permissions.Include(x => x.PermissionType).FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Domain.Interface.Permissions;
+﻿using AutoMapper;
+using Domain.Interface.ElasticsearchServices;
+using Domain.Interface.Permissions;
 using Domain.Permissions;
 using MediatR;
 using System;
@@ -9,18 +11,24 @@ using System.Threading.Tasks;
 
 namespace Application.Permissions.Querys
 {
-    public class GetPermissionsFilterQueryHandler : IRequestHandler<GetPermissionsFilterQuery, Permission?>, IGetPermissionsFilterQueryHandler
+    public class GetPermissionsFilterQueryHandler : IRequestHandler<GetPermissionsFilterQuery, PermissionResponse>, IGetPermissionsFilterQueryHandler
     {
-        private readonly IPermissionRepository _permissionRepository;
+        
+        private readonly IMapper _mapper;
+        private readonly IElasticSearchApplication<PermissionElasticsearch> _elasticsearchApplication;
 
-        public GetPermissionsFilterQueryHandler(IPermissionRepository permissionRepository)
+        public GetPermissionsFilterQueryHandler(
+             IElasticSearchApplication<PermissionElasticsearch> elasticsearchApplication,
+             IMapper mapper)
         {
-            _permissionRepository = permissionRepository;
+            _mapper = mapper;
+            _elasticsearchApplication = elasticsearchApplication;
         }
 
-        public async Task<Permission?> Handle(GetPermissionsFilterQuery request, CancellationToken cancellationToken)
+        public async Task<PermissionResponse> Handle(GetPermissionsFilterQuery request, CancellationToken cancellationToken)
         {
-            return await _permissionRepository.GetPermissionByIdAsync(request.id);
+           var response = await _elasticsearchApplication.GetAsync(request.id);
+            return _mapper.Map<PermissionResponse>(response);
         }
     }
 }

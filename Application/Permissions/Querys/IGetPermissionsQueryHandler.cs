@@ -4,6 +4,6 @@ namespace Application.Permissions.Querys
 {
     public interface IGetPermissionsQueryHandler
     {
-        Task<IEnumerable<Permission>> Handle(GetPermissionsQuery request, CancellationToken cancellationToken);
+        Task<IEnumerable<PermissionResponse>> Handle(GetPermissionsQuery request, CancellationToken cancellationToken);
     }
 }

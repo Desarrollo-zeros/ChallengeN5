@@ -14,8 +14,8 @@ namespace Infrastructure.UnitOfWork
     {
         private readonly AppDbContext _dbContext;
       
-        public IPermissionRepository PermissionRepository { get; set; }
-        public IPermissionTypeRepository PermissionTypeRepository { get; set; }
+        public IPermissionRepository PermissionRepository { get;  }
+        public IPermissionTypeRepository PermissionTypeRepository { get;}
 
         public UnitOfWork(IAppDbContext dbContext, IPermissionRepository permissionRepository, IPermissionTypeRepository permissionType)
         {
