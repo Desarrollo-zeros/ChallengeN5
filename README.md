@@ -167,6 +167,12 @@ volumes:
  ```
 
 
+Nota:
+Una vez que hayas configurado el entorno de desarrollo y hayas iniciado todos los servicios a través del comando "docker-compose up", puedes acceder a la interfaz web de Seq ingresando en tu navegador la dirección "http://localhost:5341". Aquí, podrás ver todos los registros generados por la API en tiempo real y utilizar la búsqueda y el filtrado para encontrar información específica.
+En resumen, Seq es una herramienta muy útil para el seguimiento y análisis de registros en aplicaciones modernas, y en este proyecto en particular se utiliza para monitorear y analizar los registros generados por la API.
+
+
+
 ## Contribución
 
 Si quieres contribuir a este proyecto, por favor lee el archivo CONTRIBUTING.md para conocer los pasos a seguir.
