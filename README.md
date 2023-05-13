@@ -87,7 +87,7 @@ Nota: Asegurarse de tener los puertos 5341, 5001, 9200, 2181 y 9092 disponibles 
 
 Nota: Si necesitas modificar algún archivo de configuración (como appsettings.json), debes detener y volver a iniciar los contenedores para que los cambios surtan efecto.
 
-Nota: EL proyecto tiene automigración, por ende solo es ejecutar.
+Nota: El proyecto cuenta con migraciones automáticas, por lo que solo es necesario ejecutarlo.
 
  ```yml
 version: '3.9'
