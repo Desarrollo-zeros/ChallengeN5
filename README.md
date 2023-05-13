@@ -201,7 +201,6 @@ Endpoint para obtener los logs de la aplicación. Retorna una lista de objetos J
 
 ## Contribución
 
-Si quieres contribuir a este proyecto, por favor lee el archivo CONTRIBUTING.md para conocer los pasos a seguir.
 
 ## Licencia
 
