@@ -173,6 +173,32 @@ En resumen, Seq es una herramienta muy útil para el seguimiento y análisis de 
 
 
 
+Este código es un ejemplo de un controlador en la API que maneja las solicitudes HTTP relacionadas con permisos y registros de auditoría. El controlador está etiquetado con la ruta base "api/permissions" y es un controlador de tipo ApiController de ASP.NET Core.
+
+A continuación, se describen los endpoints disponibles en la API:
+
+POST /api/Permissions
+Endpoint para solicitar un permiso. Recibe en el cuerpo de la petición un objeto JSON con la información del permiso a solicitar. Retorna el resultado de la solicitud.
+
+PUT /api/Permissions/{id}
+Endpoint para modificar un permiso existente. Recibe como parámetro en la URL el Id del permiso a modificar y en el cuerpo de la petición un objeto JSON con la información del permiso actualizado. Retorna el resultado de la modificación.
+
+GET /api/Permissions
+Endpoint para obtener todos los permisos registrados. Retorna una lista de objetos JSON con la información de los permisos registrados.
+
+PATCH /api/Permissions
+Endpoint para obtener los logs de la aplicación. Retorna una lista de objetos JSON con la información de los logs.
+
+
+ ```
+| Método HTTP | Ruta                          | Descripción                                |
+|-------------|-------------------------------|--------------------------------------------|
+| POST        | /api/permissions              | Solicitar un nuevo permiso                 |
+| PUT         | /api/permissions/{id}         | Modificar un permiso existente             |
+| GET         | /api/permissions              | Obtener una lista de permisos existentes   |
+| PATCH       | /api/permissions              | Obtener una lista de registros de auditoría|
+```
+
 ## Contribución
 
 Si quieres contribuir a este proyecto, por favor lee el archivo CONTRIBUTING.md para conocer los pasos a seguir.
